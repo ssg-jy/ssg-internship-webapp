@@ -25,4 +25,8 @@ public class OrderDetailService {
 		}
 		orderDetailRepository.saveAll(orderDetails);
 	}
+	
+	public List<JumunDetail> showOrder(int oid) {
+		return orderDetailRepository.findByOrderId(oid);
+	}
 }

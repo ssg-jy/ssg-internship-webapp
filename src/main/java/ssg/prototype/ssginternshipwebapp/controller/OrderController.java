@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import ssg.prototype.ssginternshipwebapp.domain.entity.Customer;
 import ssg.prototype.ssginternshipwebapp.domain.entity.Jumun;
+import ssg.prototype.ssginternshipwebapp.domain.entity.JumunDetail;
 import ssg.prototype.ssginternshipwebapp.domain.entity.Product;
 import ssg.prototype.ssginternshipwebapp.domain.repository.CustomerRepository;
 import ssg.prototype.ssginternshipwebapp.domain.repository.OrderRepository;
@@ -62,5 +63,12 @@ public class OrderController {
 		
 		model.addAttribute("orders", orders);
 		return "/order/list";
+	}
+	
+	@GetMapping("/detail/{oid}")
+	public String showDetail(@PathVariable("oid") int oid, Model model) {
+		List<JumunDetail> orderDetails = orderDetailService.showOrder(oid);
+		model.addAttribute("orderDetails", orderDetails);
+		return "/order/detail";
 	}
 }
