@@ -18,8 +18,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import ssg.prototype.ssginternshipwebapp.domain.entity.Customer;
 import ssg.prototype.ssginternshipwebapp.domain.entity.Product;
+import ssg.prototype.ssginternshipwebapp.domain.entity.Variable;
 import ssg.prototype.ssginternshipwebapp.domain.repository.CustomerRepository;
 import ssg.prototype.ssginternshipwebapp.domain.repository.ProductRepository;
+import ssg.prototype.ssginternshipwebapp.domain.repository.VariableRepository;
 import ssg.prototype.ssginternshipwebapp.service.OrderDetailService;
 import ssg.prototype.ssginternshipwebapp.service.OrderService;
 import ssg.prototype.ssginternshipwebapp.service.ProductService;
@@ -31,6 +33,9 @@ public class ProductController {
 
 	@Autowired
 	ProductRepository productRepository;
+
+	@Autowired
+	VariableRepository variableRepository;
 
 	@Autowired
 	CustomerRepository customerRepository;
@@ -76,19 +81,28 @@ public class ProductController {
 				return "redirect:/"; // 에러 페이지 출력해야!!!
 			}
 		}
-		Object orderId_ = session.getAttribute("orderId");
+//		Object orderId_ = session.getAttribute("orderId");
+		Optional<Variable> ocount_ = variableRepository.findById("ocount");
 		int orderId = 1;
+		if(ocount_.isPresent()) {
+			Variable ocount = ocount_.get(); 
+			orderId = ocount.getValue();
+			ocount.setValue(orderId+1);
+			variableRepository.save(ocount);
+		}
+		/*
 		if(orderId_ == null) {
 			session.setAttribute("orderId", 1);
 		} else {
 			orderId = (int)orderId_;
 		}
+		*/
 		orderService.saveOrder(cid, orderId); // 세션에 저장된 customer key 로 해야.
 		
 		List<Product> ordered = productService.findProductsById(checked);
 		orderDetailService.saveOrder(orderId, ordered);
 		
-		session.setAttribute("orderId", orderId+1);
+//		session.setAttribute("orderId", orderId+1);
 		
 		// orderService를 만들어야 함!! // ordered에 넣어줘야 한다!!
 		model.addAttribute("ordered", ordered);

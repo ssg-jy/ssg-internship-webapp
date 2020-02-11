@@ -19,7 +19,10 @@
 			</thead>
 			<tbody>
 				<tr th:each="order : ${orders}">
-					<th scope="row" th:text="${order.orderId}"><a th:href="@{'/order/detail/'+${order.orderId}}">상세보기</a></th>
+					<th scope="row" th:inline="text">
+						[[${order.orderId}]]
+						<a th:href="@{'/order/detail/'+${order.orderId}}">주문 상세보기</a>
+					</th>
 					<td th:text="${order.orderedDate}"></td>
 				</tr>
 			</tbody>

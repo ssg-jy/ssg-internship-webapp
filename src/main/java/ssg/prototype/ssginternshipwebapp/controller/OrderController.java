@@ -71,4 +71,5 @@ public class OrderController {
 		model.addAttribute("orderDetails", orderDetails);
 		return "/order/detail";
 	}
+	
 }
