@@ -19,7 +19,7 @@
 						<th scope="col">상품명</th>
 						<th scope="col">가격</th>
 						<th scope="col">재고</th>
-						<th scope="col">선택</th>
+						<th scope="col">수량</th>
 					</tr>
 				</thead>
 				<tbody>
@@ -27,7 +27,8 @@
 						<th scope="row" th:text="${product.name}"></th>
 						<td th:text="${product.price}"></td>
 						<td th:text="${product.stock}"></td>
-						<td><input type="checkbox" name="checked" th:value="${product.id}" /></td>
+						<!-- <td><input type="checkbox" name="checked" th:value="${product.id}" /></td> -->
+						<td><input type="number" th:name="${product.id}" /></td>						
 					</tr>
 				</tbody>
 			</table>

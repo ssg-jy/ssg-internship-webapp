@@ -21,7 +21,7 @@ public class OrderDetailService {
 		
 		List<JumunDetail> orderDetails = new ArrayList<JumunDetail>();
 		for(Product product : ordered) {
-			orderDetails.add(new JumunDetail(orderId, product.getId()));
+			orderDetails.add(new JumunDetail(orderId, product.getId(), 1));
 		}
 		orderDetailRepository.saveAll(orderDetails);
 	}
