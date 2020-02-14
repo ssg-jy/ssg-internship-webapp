@@ -50,12 +50,12 @@ public class OrderController {
 	@GetMapping({"/list/{name}"})
 	public String showList(@PathVariable("name") String name, Model model, HttpServletRequest request) {
 		HttpSession session = request.getSession();
+		String cname = (String) session.getAttribute("cname");
 		Long cid = (Long) session.getAttribute("cid");
-		if(cid == null) {
+		if(cname == null) {
 			return "redirect:/";
 		} else {
-			Optional<Customer> customer = customerRepository.findById(cid);
-			if(customer.isEmpty() || !name.equals(customer.get().getName())) {
+			if(!name.equals(cname)) {
 				return "redirect:/"; // 에러 페이지 출력해야!!!
 			}
 		}
@@ -68,7 +68,9 @@ public class OrderController {
 	@GetMapping("/detail/{oid}")
 	public String showDetail(@PathVariable("oid") int oid, Model model) {
 		List<JumunDetail> orderDetails = orderDetailService.showOrder(oid);
+		List<Product> products = productService.findProductsById(orderDetails);
 		model.addAttribute("orderDetails", orderDetails);
+		model.addAttribute("products", products);
 		return "/order/detail";
 	}
 	

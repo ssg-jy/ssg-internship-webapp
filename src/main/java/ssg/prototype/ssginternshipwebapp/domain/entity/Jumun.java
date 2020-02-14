@@ -32,10 +32,18 @@ public class Jumun implements Serializable {
 	@Column
 	private String orderedDate;
 	
+	@Column
+	private int status;
+	
+	@Column
+	private int orderId0;
+	
 	@Builder
-	public Jumun(Long customerId, int orderId, String orderedDate) {
+	public Jumun(Long customerId, int orderId, String orderedDate, int status, int orderId0) {
 		this.customerId = customerId;
 		this.orderId = orderId;
 		this.orderedDate = orderedDate;
+		this.status = status;
+		this.orderId0 = orderId0;
 	}
 }

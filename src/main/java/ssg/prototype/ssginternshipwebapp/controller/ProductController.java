@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import ssg.prototype.ssginternshipwebapp.domain.entity.Customer;
+import ssg.prototype.ssginternshipwebapp.domain.entity.JumunDetail;
 import ssg.prototype.ssginternshipwebapp.domain.entity.Product;
 import ssg.prototype.ssginternshipwebapp.domain.entity.Variable;
 import ssg.prototype.ssginternshipwebapp.domain.repository.CustomerRepository;
@@ -55,12 +56,11 @@ public class ProductController {
 	@GetMapping({"","/","/{name}"})
 	public String showProducts(@PathVariable("name") String name, Model model, HttpServletRequest request) {
 		HttpSession session = request.getSession();
-		Long cid = (Long) session.getAttribute("cid");
-		if(cid == null) {
+		String cname = (String) session.getAttribute("cname");
+		if(cname == null) {
 			return "redirect:/";
 		} else {
-			Optional<Customer> customer = customerRepository.findById(cid);
-			if(customer.isEmpty() || !name.equals(customer.get().getName())) {
+			if(!name.equals(cname)) {
 				return "redirect:/"; // 에러 페이지 출력해야!!!
 			}
 		}
@@ -73,17 +73,25 @@ public class ProductController {
 	}
 	
 	@PostMapping("/order/{name}")
-	public String orderProducts(@PathVariable("name") String name, @RequestParam Map<String, Integer> qtys, Model model, HttpServletRequest request) {
+	public String orderProducts(@PathVariable("name") String name, @RequestParam Map<String, String> qtys, Model model, HttpServletRequest request) {
 		HttpSession session = request.getSession();
 		Long cid = (Long) session.getAttribute("cid");
 		if(cid == null) {
 			return "redirect:/";
 		} else {
 			Optional<Customer> customer = customerRepository.findById(cid);
-			if(customer.isEmpty() || !name.equals(customer.get().getName())) {
+			if(!customer.isPresent() || !name.equals(customer.get().getName())) {
 				return "redirect:/"; // 에러 페이지 출력해야!!!
 			}
 		}
+
+		/* 
+		 * qtys에서 수량이 0인 상품-수량 쌍 제거 
+		 * 각 함수에서 계속 0이상인지 검사하지 않고 그냥 여기서 제거하고 넘기는 걸로!
+		 */
+		qtys.entrySet().removeIf(e -> e.getValue().equals("0"));
+		
+		
 //		Object orderId_ = session.getAttribute("orderId");
 		Optional<Variable> ocount_ = variableRepository.findById("ocount");
 		int orderId = 1;
@@ -101,14 +109,16 @@ public class ProductController {
 		}
 		*/
 		orderService.saveOrder(cid, orderId); // 세션에 저장된 customer key 로 해야.
-		Set<String> checked = qtys.keySet();
-		List<Product> ordered = productService.findProductsById(checked);
-		orderDetailService.saveOrder(orderId, ordered);
-		
+		productService.updateQty(qtys);
+		List<JumunDetail> orderDetails = orderDetailService.saveOrder(orderId, qtys);
+		List<Product> products = productService.findProductsById(orderDetails);
+
 //		session.setAttribute("orderId", orderId+1);
 		
 		// orderService를 만들어야 함!! // ordered에 넣어줘야 한다!!
-		model.addAttribute("ordered", ordered);
+//		model.addAttribute("ordered", ordered);
+		model.addAttribute("orderDetails", orderDetails);
+		model.addAttribute("products", products);
 		return "/product/order";
 	}
 }

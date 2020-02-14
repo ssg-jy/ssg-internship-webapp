@@ -15,16 +15,18 @@
 				<tr>
 					<th scope="col">상품명</th>
 					<th scope="col">가격</th>
+					<th scope="col">수량</th>
 				</tr>
 			</thead>
 			<tbody>
-				<tr th:each="product : ${ordered}">
-					<th scope="row" th:text="${product.name}"></th>
-					<td th:text="${product.price}"></td>
+				<tr th:each="detail, index : ${orderDetails}">
+					<th scope="row" th:text="${products.get(index.index).getName()}"></th>
+					<th scope="row" th:text="${products.get(index.index).getPrice()}"></th>
+					<td th:text="${detail.qty}"></td>
 				</tr>
 			</tbody>
 		</table>
-		<!-- <a th:href="@{/oreder/list}"> -->
+		<!-- <a th:href="@{/order/list}"> -->
 		<a th:href="@{'/product/'+${name}}">주문 하기</a>
 		<a th:href="@{'/order/list/'+${name}}">전체 주문 목록</a>
 	</div>

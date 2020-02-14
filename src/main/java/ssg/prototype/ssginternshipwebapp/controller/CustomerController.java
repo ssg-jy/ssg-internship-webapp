@@ -64,6 +64,7 @@ public class CustomerController {
 		System.out.println(triedCustomer.getName()+" "+triedCustomer.getPassword());
 		if(triedCustomer.getPassword().equals(param.get("password"))) {
 			session.setAttribute("cid", triedCustomer.getId());
+			session.setAttribute("cname", triedCustomer.getName());
 			return "redirect:/product/"+triedCustomer.getName();
 //			return "/customer/signin";
 		}

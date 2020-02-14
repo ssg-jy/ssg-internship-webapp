@@ -2,11 +2,13 @@ package ssg.prototype.ssginternshipwebapp.service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
 import org.springframework.stereotype.Service;
 
+import ssg.prototype.ssginternshipwebapp.domain.entity.JumunDetail;
 import ssg.prototype.ssginternshipwebapp.domain.entity.Product;
 import ssg.prototype.ssginternshipwebapp.domain.repository.ProductRepository;
 
@@ -19,16 +21,30 @@ public class ProductService {
 	}
 	
 	public List<Product> findProductsById(Set<String> ids) {
-		List<Product> checkedProducts = new ArrayList<Product>();
+		ArrayList<Long> pids = new ArrayList<Long>();
 		for(String id : ids) {
-			System.out.println(id);
-			Optional<Product> op = productRepository.findById(Long.parseLong(id));		
+			pids.add(Long.parseLong(id));
+		}
+		return productRepository.findAllById(pids);
+	}
+	
+	public List<Product> findProductsById(List<JumunDetail> orderDetails) {
+		ArrayList<Product> products = new ArrayList<Product>();
+		for(JumunDetail detail : orderDetails) {
+			Optional<Product> op = productRepository.findById(detail.getProductId());
+			if(op.isPresent()) products.add(op.get());
+		}
+		return products;
+	}
+	
+	public void updateQty(Map<String, String> qtys) {
+		Set<String> ids = qtys.keySet();
+		for(String id : ids) {
+			Optional<Product> op = productRepository.findById(Long.parseLong(id));
 			if(op.isPresent()) {
 				Product pro = op.get();
-				pro.setStock(pro.getStock()-1);
-				checkedProducts.add(op.get());
+				pro.setStock(pro.getStock() - Integer.parseInt(qtys.get(id)));
 			}
 		}
-		return checkedProducts;
 	}
 }

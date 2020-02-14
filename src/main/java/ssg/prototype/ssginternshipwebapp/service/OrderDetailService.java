@@ -2,6 +2,7 @@ package ssg.prototype.ssginternshipwebapp.service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.stereotype.Service;
 
@@ -17,13 +18,16 @@ public class OrderDetailService {
 		this.orderDetailRepository = orderDetailRepository;
 	}
 	
-	public void saveOrder(int orderId, List<Product> ordered) {
+	public List<JumunDetail> saveOrder(int orderId, Map<String, String> qtys) {
 		
 		List<JumunDetail> orderDetails = new ArrayList<JumunDetail>();
-		for(Product product : ordered) {
-			orderDetails.add(new JumunDetail(orderId, product.getId(), 1));
+		for(String pId : qtys.keySet()) {
+			Long pid = Long.parseLong(pId);
+			int qty = Integer.parseInt(qtys.get(pId));
+			if(qty > 0) orderDetails.add(new JumunDetail(orderId, pid, qty));
 		}
 		orderDetailRepository.saveAll(orderDetails);
+		return orderDetails;
 	}
 	
 	public List<JumunDetail> showOrder(int oid) {

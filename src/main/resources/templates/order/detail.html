@@ -14,13 +14,15 @@
 				<thead class="thead-light">
 				<tr>
 					<th scope="col">상품</th>
+					<th scope="col">가격</th>
 					<th scope="col">수량</th>
 				</tr>
 			</thead>
 			<tbody>
-				<tr th:each="orderDetail : ${orderDetails}">
-					<th scope="row" th:text="${orderDetail.productId}"></th>
-					<td th:text="1"></td>
+				<tr th:each="orderDetail, index : ${orderDetails}">
+					<th scope="row" th:text="${products.get(index.index).getName()}"></th>
+					<th scope="row" th:text="${products.get(index.index).getPrice()}"></th>
+					<td th:text="${orderDetail.qty}"></td>
 				</tr>
 			</tbody>
 		</table>
