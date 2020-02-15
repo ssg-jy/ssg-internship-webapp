@@ -66,11 +66,12 @@ public class OrderController {
 	}
 	
 	@GetMapping("/detail/{oid}")
-	public String showDetail(@PathVariable("oid") int oid, Model model) {
+	public String showDetail(@PathVariable("oid") int oid, Model model, HttpSession session) {
 		List<JumunDetail> orderDetails = orderDetailService.showOrder(oid);
 		List<Product> products = productService.findProductsById(orderDetails);
 		model.addAttribute("orderDetails", orderDetails);
 		model.addAttribute("products", products);
+		model.addAttribute("name", session.getAttribute("cname"));
 		return "/order/detail";
 	}
 	

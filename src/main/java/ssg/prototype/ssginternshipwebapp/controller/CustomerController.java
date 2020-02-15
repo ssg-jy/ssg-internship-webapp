@@ -45,17 +45,26 @@ public class CustomerController {
 			
 		return "/customer/signin";
 	}
-	/* // 가입용 아직 안씀.
-	@PostMapping("/")
-	public @ResponseBody List<Customer> createCustomer(@RequestBody Map<String,String> param){
-		String name = param.get("name");
-		String password = param.get("password");
-		Customer customer = Customer.builder().name(name).password(password).build();
-		customerRepository.save(customer);
+	
+	// 가입용 아직 안씀.
+	@PostMapping("/join")
+	public String createCustomer(@RequestParam Map<String,String> param, HttpServletRequest request){
+		HttpSession session = request.getSession();
 		
-		return customerRepository.findAll();
+		String name = param.get("name");
+		System.out.println(name);
+		String password = param.get("password");
+		System.out.println(password);
+		
+		Customer customer = Customer.builder().name(name).password(password).build();
+		customer = customerRepository.save(customer);
+		
+		session.setAttribute("cid", customer.getId());
+		session.setAttribute("cname", customer.getName());
+		
+		return "redirect:/product/"+name;
 	}
-	*/
+	
 	@PostMapping("/login")
 	public String logIn(@RequestParam Map<String, String> param, HttpServletRequest request) {
 		// 서비스로 보낸다. 서비스에서 리포지토리 조회해서 맞으면 세션에 id 저장해야.
