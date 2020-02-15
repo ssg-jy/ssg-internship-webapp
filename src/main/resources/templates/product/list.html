@@ -9,7 +9,11 @@
 </head>
 <body>
 	<div class="container list">
-		<h2 th:text="${name}+'님의 주문'"></h2>		
+		<ul>
+			<li><a th:href="@{'/product/'+${name}}">장바구니</a></li>
+			<li><a th:href="@{'/order/list/'+${name}}">주문목록</a></li>
+		</ul>
+		<h2 th:text="${name}+'님의 장바구니'"></h2>		
 		<h3>제품 목록</h3>
 		<!-- <form th:action="@{'/mycontroller/' + ${type}}"> -->
 		<form method="post" th:action="@{'/product/order/'+${name}}">
