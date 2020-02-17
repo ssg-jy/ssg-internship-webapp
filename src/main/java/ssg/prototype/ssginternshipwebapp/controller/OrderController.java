@@ -67,6 +67,11 @@ public class OrderController {
 	
 	@GetMapping("/detail/{oid}")
 	public String showDetail(@PathVariable("oid") int oid, Model model, HttpSession session) {
+		/*
+		* 여기서 oid로 db 조회해서 사용자 아이디와 session의 cid 가 동일한지 확인해야한다!!
+		*/
+		List<Jumun> ord = orderRepository.findByOrderId(oid);
+		model.addAttribute("orderDate", ord.get(0).getOrderedDate());
 		List<JumunDetail> orderDetails = orderDetailService.showOrder(oid);
 		List<Product> products = productService.findProductsById(orderDetails);
 		model.addAttribute("orderDetails", orderDetails);
