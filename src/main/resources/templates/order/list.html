@@ -16,6 +16,7 @@
 				<tr>
 					<th scope="col">주문번호</th>
 					<th scope="col">날짜</th>
+					<th scope="col">상태</th>
 				</tr>
 			</thead>
 			<tbody>
@@ -25,6 +26,7 @@
 						<a th:href="@{'/order/detail/'+${order.orderId}}">주문 상세보기</a>
 					</th>
 					<td th:text="${order.orderedDate}"></td>
+					<td th:text="${stat_string[order.status]}"></td>
 				</tr>
 			</tbody>
 		</table>

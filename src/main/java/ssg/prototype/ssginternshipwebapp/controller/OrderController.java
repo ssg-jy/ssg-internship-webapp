@@ -64,6 +64,7 @@ public class OrderController {
 		}
 		List<Jumun> orders = orderRepository.findByCustomerId(cid);
 		
+		model.addAttribute("stat_string", OrdStat.stat_string);
 		model.addAttribute("orders", orders);
 		return "/order/list";
 	}
