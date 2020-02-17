@@ -30,8 +30,12 @@
 				</tr>
 			</tbody>
 		</table>
+		<div>
+			<ul class="statuses">
+				<li th:each="status : ${statuses}" th:text="${status.getText()}" class="status" th:classappend="${status.getNow()} ? now : ''"></li>
+			</ul>
+		</div>
 		<!-- <a th:href="@{/order/list}"> -->
-		<a th:href="@{'/product/'+${name}}">주문 하기</a>
 	</div>
 </body>
 </html>
