@@ -9,10 +9,7 @@
 </head>
 <body>
 	<div class="container list">
-		<ul>
-			<li><a th:href="@{'/product/'+${name}}">장바구니</a></li>
-			<li><a th:href="@{'/order/list/'+${name}}">주문목록</a></li>
-		</ul>
+		<nav th:replace="common/nav.html"></nav>
 		<h2 th:text="${name}+'님의 장바구니'"></h2>		
 		<h3>제품 목록</h3>
 		<!-- <form th:action="@{'/mycontroller/' + ${type}}"> -->
