@@ -7,6 +7,7 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 
 import ssg.prototype.ssginternshipwebapp.OrdCode;
+import ssg.prototype.ssginternshipwebapp.OrdStat;
 import ssg.prototype.ssginternshipwebapp.domain.entity.Jumun;
 import ssg.prototype.ssginternshipwebapp.domain.entity.Product;
 import ssg.prototype.ssginternshipwebapp.domain.repository.OrderRepository;
@@ -22,6 +23,6 @@ public class OrderService {
 	public void saveOrder(Long customerId, int orderId) {
 		SimpleDateFormat format = new SimpleDateFormat("E MMM dd HH:mm:ss");
 		String time = format.format(new Date());
-		orderRepository.save(new Jumun(customerId, orderId, time, OrdCode.ORDER, orderId));
+		orderRepository.save(new Jumun(customerId, orderId, time, OrdStat.ORD_COMPLETE, OrdCode.ORDER, orderId));
 	}
 }
