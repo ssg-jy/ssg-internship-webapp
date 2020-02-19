@@ -73,10 +73,13 @@ public class ProductController {
 		model.addAttribute("name", name);
 		model.addAttribute("productList", lp);
 		int oid = -1;
+		String ordText = "주문하기";
 		if(!orderId.isEmpty()) {
 			oid = orderId.get();
+			ordText = "주문더하기";
 		}
 		model.addAttribute("orderId", oid);
+		model.addAttribute("ordText", ordText);
 		return "/product/list";
 	}
 	
@@ -107,10 +110,9 @@ public class ProductController {
 		Optional<Variable> ocount_ = variableRepository.findById("ocount");
 		int orderId = 1;
 		
-		List<JumunDetail> orderDetails = null;
 		if(!orderId_.equals("-1")) { // 주문더하기일 경우!
 			orderId = Integer.parseInt(orderId_);
-			orderDetails = orderDetailService.addOrder(orderId, qtys);
+			orderDetailService.addOrder(orderId, qtys);
 		} else { // 신규주문일 경우
 //			if(!ocount_.isEmpty()) { // 항상 있음. 아예 시작전에 DB에 저장해놨음!(초기값: 1) = 없어도 되는 조건!!!
 			Variable ocount = ocount_.get(); 
@@ -122,7 +124,7 @@ public class ProductController {
 			orderService.saveOrder(cid, orderId); // 세션에 저장된 customer key 로 해야.
 			
 			// 신규주문인 경우에 상세주문에 저장
-			orderDetails = orderDetailService.saveOrder(orderId, qtys);
+			orderDetailService.saveOrder(orderId, qtys);
 //			}
 		}
 		
