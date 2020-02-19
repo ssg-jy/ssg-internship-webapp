@@ -69,8 +69,11 @@ public class OrderController {
 				return "redirect:/"; // 에러 페이지 출력해야!!!
 			}
 		}
-		List<Jumun> orders = orderRepository.findByCustomerId(cid);
 		
+		/******** 많이 아쉬운 부분!!! 이런건 처음부터 db에서 sql로 걸러줘야 하는데!!********/
+		List<Jumun> orders = orderRepository.findByCustomerId(cid);
+		orders.removeIf(o -> o.getCode() != OrdCode.ORDER);
+		/**************/
 		model.addAttribute("stat_string", OrdStat.stat_string);
 		model.addAttribute("orders", orders);
 		return "/order/list";
