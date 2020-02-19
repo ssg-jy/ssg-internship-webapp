@@ -7,5 +7,5 @@ public class ItemCode {
 	public static final int ORDERED = 1;
 	public static final int ADDED = 2;
 	public static final int CANCELED = 3;
-	
+	public static final int RETURNED = 4;
 }

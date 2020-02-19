@@ -12,11 +12,13 @@
 		<nav th:replace="common/nav.html"></nav>
 		<h2 th:text="${name}+'님의 주문 목록'"></h2>
 			<p th:text="${orderDate}"></p>
+			<!-- 배송중/반품중일 경우 보이는 상태들 statuses는 그대로 가고 class이름만 바꾼다!! -->
 			<div>
-				<ul class="statuses">
+				<ul class="statuses" th:classappend="${returned} ? rtn : ord">
 					<li th:each="status : ${statuses}" th:text="${status.getText()}" class="status" th:classappend="${status.getNow()} ? now : ''"></li>
 				</ul>
 			</div>
+			
 			<form class="margin-under" method="post" th:action="@{'/order/delivered/'+${orderId}}">
 				<input th:if="${!delivered}" type="submit" class="btn btn-success" value="배송완료처리" />
 			</form>

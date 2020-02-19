@@ -86,15 +86,29 @@ public class OrderController {
 		*/
 		List<Jumun> ord = orderRepository.findByOrderId0(oid0);
 		System.out.println("원주문번호로 찾은 주문 개수: "+ord.size());
-		List<Status> statuses = new ArrayList<Status>();
-		statuses.add(new Status(OrdStat.stat_string[0], false));
-		statuses.add(new Status(OrdStat.stat_string[1], false));
-		statuses.add(new Status(OrdStat.stat_string[2], false));
-		statuses.get(ord.get(0).getStatus()).setNow(true);
-		
+		boolean returned = false;
 		boolean delivered = false;
-		if(ord.get(0).getStatus() == OrdStat.DLV_COMPLETE) {
+		
+		if(ord.get(0).getCode() == OrdCode.RETURN) {
+			returned = true;
 			delivered = true;
+		} else {
+			if(ord.get(0).getStatus() == OrdStat.DLV_COMPLETE) {
+				delivered = true;
+			}
+		}
+				
+		List<Status> statuses = new ArrayList<Status>();
+		if(!returned) {
+			statuses.add(new Status(OrdStat.stat_string[0], false));
+			statuses.add(new Status(OrdStat.stat_string[1], false));
+			statuses.add(new Status(OrdStat.stat_string[2], false));
+			statuses.get(ord.get(0).getStatus()).setNow(true);
+		} else {
+			statuses.add(new Status(OrdStat.stat_string[0], false));
+			statuses.add(new Status(OrdStat.stat_string[1], false));
+			statuses.add(new Status(OrdStat.stat_string[2], false));
+			statuses.get(ord.get(0).getStatus()).setNow(true);
 		}
 		
 		List<JumunDetail> canceled = new ArrayList<JumunDetail>();
@@ -115,6 +129,7 @@ public class OrderController {
 			total += orderDetails.get(i).getQty() * products.get(i).getPrice();
 		}
 		
+		model.addAttribute("returned", returned);
 		model.addAttribute("delivered", delivered);
 		model.addAttribute("canceled", canceled);
 		model.addAttribute("cldPducts", canceledProducts);

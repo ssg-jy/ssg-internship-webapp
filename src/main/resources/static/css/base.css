@@ -52,9 +52,13 @@ ul.statuses {
 ul.statuses li {
 	width: 30%;
 	border: 1px solid #e7e7e7;
-	padding: 10px;
+	padding: 10px;	
 }
 
-li.now {
+.ord li.now {
 	background-color: #ffd040;
+}
+
+.rtn li.now {
+	background-color: #1cc9c5;
 }
