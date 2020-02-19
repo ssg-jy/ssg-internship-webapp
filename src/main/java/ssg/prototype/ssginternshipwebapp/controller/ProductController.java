@@ -125,34 +125,7 @@ public class ProductController {
 			orderDetails = orderDetailService.saveOrder(orderId, qtys);
 //			}
 		}
-		/*
-		if(orderId_ == null) {
-			session.setAttribute("orderId", 1);
-		} else {
-			orderId = (int)orderId_;
-		}
-		*/
 		
-		// 전달된 orderDetails를 토대로 products 리스트를 뽑아서 넘긴다. (상품 이름 출력 목적)
-		List<Product> products = productService.findProductsById(orderDetails);
-		
-		int total = 0;
-		for(int i=0; i<products.size(); i++) {
-			total += orderDetails.get(i).getQty() * products.get(i).getPrice();
-		}
-		System.out.println("-------------------");
-		
-//		session.setAttribute("orderId", orderId+1);
-				
-		// orderService를 만들어야 함!! // ordered에 넣어줘야 한다!!
-//		model.addAttribute("ordered", ordered);
-		model.addAttribute("orderDetails", orderDetails);
-		model.addAttribute("products", products);
-		for(int i=0; i<orderDetails.size(); i++) {
-			System.out.println(products.get(i).getName()+" "+orderDetails.get(i).getItemCode());
-		}
-		model.addAttribute("total", total);
-		model.addAttribute("ItemCode", new ItemCode());
-		return "/product/order";
+		return "redirect:/order/detail/"+orderId;
 	}
 }

@@ -19,6 +19,7 @@
 					<th scope="col">가격</th>
 					<th scope="col">수량</th>
 					<th scope="col">총액</th>
+					<th scope=""></th>
 				</tr>
 			</thead>
 			<tbody>
@@ -29,9 +30,11 @@
 					<th scope="row" th:text="${products.get(index.index).getPrice()}"></th>
 					<td th:text="${orderDetail.qty}"></td>
 					<td th:with="sum=${products.get(index.index).getPrice()*orderDetail.qty}" th:text="${sum}"></td>
+					<th th:if="${ItemCode.ADDED}==${orderDetail.itemCode}">주문더하기</th>
 				</tr>
 			</tbody>
 		</table>
+		<p>총합: <span th:text="${total}" /></p>
 		<div>
 			<ul class="statuses">
 				<li th:each="status : ${statuses}" th:text="${status.getText()}" class="status" th:classappend="${status.getNow()} ? now : ''"></li>

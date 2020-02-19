@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import ssg.prototype.ssginternshipwebapp.ItemCode;
 import ssg.prototype.ssginternshipwebapp.OrdStat;
 import ssg.prototype.ssginternshipwebapp.Status;
 import ssg.prototype.ssginternshipwebapp.domain.entity.Customer;
@@ -84,11 +85,18 @@ public class OrderController {
 		List<JumunDetail> orderDetails = orderDetailService.showOrder(oid);
 		List<Product> products = productService.findProductsById(orderDetails);
 		
+		int total = 0;
+		for(int i=0; i<products.size(); i++) {
+			total += orderDetails.get(i).getQty() * products.get(i).getPrice();
+		}
+		
 		model.addAttribute("orderDate", ord.get(0).getOrderedDate());
 		model.addAttribute("statuses", statuses);
 		model.addAttribute("orderDetails", orderDetails);
 		model.addAttribute("products", products);
 		model.addAttribute("name", session.getAttribute("cname"));
+		model.addAttribute("total", total);
+		model.addAttribute("ItemCode", new ItemCode());
 		return "/order/detail";
 	}
 	
