@@ -18,7 +18,7 @@
 				</ul>
 			</div>
 			<form class="margin-under" method="post" th:action="@{'/order/delivered/'+${orderId}}">
-				<input type="submit" value="배송완료처리" />
+				<input th:if="${!delivered}" type="submit" class="btn btn-success" value="배송완료처리" />
 			</form>
 			<div th:if="${canceled.size() > 0}">
 				<h3>취소목록</h3>
@@ -46,7 +46,7 @@
 				<h3>주문목록</h3>
 				<thead class="thead-light">
 					<tr>
-						<th scope="col">선택</th>
+						<th th:if="${!delivered}" scope="col">선택</th>
 						<th scope="col">상품</th>
 						<th scope="col">가격</th>
 						<th scope="col">수량</th>
@@ -57,7 +57,7 @@
 				<form method="post" th:action="@{'/order/cancel/'+${name}}">
 				<tbody>
 					<tr th:each="orderDetail, index : ${orderDetails}">
-						<td><input type="checkbox" name="checked" th:value="${products.get(index.index).id}" /></td>
+						<td th:if="${!delivered}"><input type="checkbox" name="checked" th:value="${products.get(index.index).id}" /></td>
 						<th scope="row" th:text="${products.get(index.index).getName()}">
 							<!-- <span th:if="${orderDetail.}" -->
 						</th>
@@ -66,10 +66,10 @@
 						<td th:with="sum=${products.get(index.index).getPrice()*orderDetail.qty}" th:text="${sum}"></td>
 						<th th:if="${ItemCode.ADDED}==${orderDetail.itemCode}">주문더하기</th>
 					</tr>
-					<tr>
+					<tr th:if="${!delivered}" >
 						<td>
 							<input type="hidden" name="orderId0" th:value="${orderId}" />
-							<input type="submit" th:value="선택취소" />
+							<input type="submit" class="btn btn-primary" th:value="선택취소" />
 						</td>
 						<td></td>
 						<td></td>
@@ -80,7 +80,11 @@
 				</form>
 		</table>
 		<p>총합: <span th:text="${total}" /></p>
-		<a th:href="@{'/product/'+${name}+'?orderId='+${orderId}}">주문 더하기</a>
+		<a th:if="${!delivered}" th:href="@{'/product/'+${name}+'?orderId='+${orderId}}" class="btn btn-primary">주문 더하기</a>
+		<!-- 교환~~~~~~~~ 반품~~~~~~~ -->
+		<div th:if="${delivered}">
+			
+		</div>
 	</div>
 </body>
 </html>

@@ -92,6 +92,11 @@ public class OrderController {
 		statuses.add(new Status(OrdStat.stat_string[2], false));
 		statuses.get(ord.get(0).getStatus()).setNow(true);
 		
+		boolean delivered = false;
+		if(ord.get(0).getStatus() == OrdStat.DLV_COMPLETE) {
+			delivered = true;
+		}
+		
 		List<JumunDetail> canceled = new ArrayList<JumunDetail>();
 		for(int i=1; i<ord.size(); i++) {
 			if(ord.get(i).getCode() == OrdCode.PART_CANCEL) {
@@ -110,7 +115,7 @@ public class OrderController {
 			total += orderDetails.get(i).getQty() * products.get(i).getPrice();
 		}
 		
-		
+		model.addAttribute("delivered", delivered);
 		model.addAttribute("canceled", canceled);
 		model.addAttribute("cldPducts", canceledProducts);
 		model.addAttribute("orderDate", ord.get(0).getOrderedDate());
