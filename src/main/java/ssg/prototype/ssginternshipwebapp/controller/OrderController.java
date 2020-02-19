@@ -18,15 +18,18 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import ssg.prototype.ssginternshipwebapp.ItemCode;
+import ssg.prototype.ssginternshipwebapp.OrdCode;
 import ssg.prototype.ssginternshipwebapp.OrdStat;
 import ssg.prototype.ssginternshipwebapp.Status;
 import ssg.prototype.ssginternshipwebapp.domain.entity.Customer;
 import ssg.prototype.ssginternshipwebapp.domain.entity.Jumun;
 import ssg.prototype.ssginternshipwebapp.domain.entity.JumunDetail;
 import ssg.prototype.ssginternshipwebapp.domain.entity.Product;
+import ssg.prototype.ssginternshipwebapp.domain.entity.Variable;
 import ssg.prototype.ssginternshipwebapp.domain.repository.CustomerRepository;
 import ssg.prototype.ssginternshipwebapp.domain.repository.OrderRepository;
 import ssg.prototype.ssginternshipwebapp.domain.repository.ProductRepository;
+import ssg.prototype.ssginternshipwebapp.domain.repository.VariableRepository;
 import ssg.prototype.ssginternshipwebapp.service.OrderDetailService;
 import ssg.prototype.ssginternshipwebapp.service.OrderService;
 import ssg.prototype.ssginternshipwebapp.service.ProductService;
@@ -38,6 +41,9 @@ public class OrderController {
 
 	@Autowired
 	CustomerRepository customerRepository;
+
+	@Autowired
+	VariableRepository variableRepository;
 	
 	@Autowired
 	OrderRepository orderRepository;
@@ -70,19 +76,30 @@ public class OrderController {
 		return "/order/list";
 	}
 	
-	@GetMapping("/detail/{oid}")
-	public String showDetail(@PathVariable("oid") int oid, Model model, HttpSession session) {
+	@GetMapping("/detail/{oid0}")
+	public String showDetail(@PathVariable("oid0") int oid0, Model model, HttpSession session) {
 		/*
 		* 여기서 oid로 db 조회해서 사용자 아이디와 session의 cid 가 동일한지 확인해야한다!!
 		*/
-		List<Jumun> ord = orderRepository.findByOrderId(oid);
+		List<Jumun> ord = orderRepository.findByOrderId0(oid0);
+		System.out.println("원주문번호로 찾은 주문 개수: "+ord.size());
 		List<Status> statuses = new ArrayList<Status>();
 		statuses.add(new Status(OrdStat.stat_string[0], false));
 		statuses.add(new Status(OrdStat.stat_string[1], false));
 		statuses.add(new Status(OrdStat.stat_string[2], false));
 		statuses.get(ord.get(0).getStatus()).setNow(true);
 		
-		List<JumunDetail> orderDetails = orderDetailService.showOrder(oid);
+		List<JumunDetail> canceled = new ArrayList<JumunDetail>();
+		for(int i=1; i<ord.size(); i++) {
+			if(ord.get(i).getCode() == OrdCode.PART_CANCEL) {
+				System.out.println("part_cancel order");
+				canceled.addAll(orderDetailService.showOrder(ord.get(i).getOrderId()));
+			}
+		}
+		System.out.println("canceled size: "+canceled.size());
+		List<Product> canceledProducts = productService.findProductsById(canceled);
+		
+		List<JumunDetail> orderDetails = orderDetailService.showOrder(ord.get(0).getOrderId());
 		List<Product> products = productService.findProductsById(orderDetails);
 		
 		int total = 0;
@@ -90,6 +107,9 @@ public class OrderController {
 			total += orderDetails.get(i).getQty() * products.get(i).getPrice();
 		}
 		
+		
+		model.addAttribute("canceled", canceled);
+		model.addAttribute("cldPducts", canceledProducts);
 		model.addAttribute("orderDate", ord.get(0).getOrderedDate());
 		model.addAttribute("statuses", statuses);
 		model.addAttribute("orderDetails", orderDetails);
@@ -97,7 +117,31 @@ public class OrderController {
 		model.addAttribute("name", session.getAttribute("cname"));
 		model.addAttribute("total", total);
 		model.addAttribute("ItemCode", new ItemCode());
+		model.addAttribute("orderId", oid0);
 		return "/order/detail";
+	}
+	
+	// 취소 주문은 주문을 새로 생성하고 (원주문번호**) 주문 상세 정보들을 수정해야.
+	@PostMapping("/cancel/{name}")
+	public String cancelOrder(@PathVariable("name") String name,
+			@RequestParam(value="checked") String[] checked,
+			@RequestParam(value="orderId0") String orderId0_,
+			HttpServletRequest request) {
+		HttpSession session = request.getSession();
+		Long cid = (Long) session.getAttribute("cid");
+		/******* 이 부분 따로 빼야함 ********/
+		Optional<Variable> ocount_ = variableRepository.findById("ocount");
+		Variable ocount = ocount_.get(); 
+		int newOrderId = ocount.getValue();
+		ocount.setValue(newOrderId+1);
+		variableRepository.save(ocount);
+		/***********/
+		
+		int orderId0 = Integer.parseInt(orderId0_);
+		orderService.saveOrder(cid, newOrderId, OrdCode.PART_CANCEL, orderId0);
+		
+		orderDetailService.cancelOrder(orderId0, newOrderId, checked);
+		return "redirect:/order/detail/"+orderId0;
 	}
 	
 }

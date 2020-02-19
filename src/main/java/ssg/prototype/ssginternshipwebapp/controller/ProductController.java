@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import ssg.prototype.ssginternshipwebapp.ItemCode;
+import ssg.prototype.ssginternshipwebapp.OrdCode;
 import ssg.prototype.ssginternshipwebapp.domain.entity.Customer;
 import ssg.prototype.ssginternshipwebapp.domain.entity.JumunDetail;
 import ssg.prototype.ssginternshipwebapp.domain.entity.Product;
@@ -121,7 +122,7 @@ public class ProductController {
 			variableRepository.save(ocount);
 			
 			// 신규주문인 경우 order를 새로 만든다.
-			orderService.saveOrder(cid, orderId); // 세션에 저장된 customer key 로 해야.
+			orderService.saveOrder(cid, orderId, OrdCode.ORDER, orderId); // 세션에 저장된 customer key 로 해야.
 			
 			// 신규주문인 경우에 상세주문에 저장
 			orderDetailService.saveOrder(orderId, qtys);

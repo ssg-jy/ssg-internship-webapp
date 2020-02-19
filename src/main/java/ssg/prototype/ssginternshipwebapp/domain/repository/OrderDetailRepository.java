@@ -7,6 +7,7 @@ import org.springframework.stereotype.Repository;
 
 import ssg.prototype.ssginternshipwebapp.domain.entity.JumunDetail;
 import ssg.prototype.ssginternshipwebapp.domain.entity.JumunDetailId;
+
 @Repository
 public interface OrderDetailRepository extends JpaRepository<JumunDetail, JumunDetailId>{
 	public List<JumunDetail> findByProductId(Long productId);

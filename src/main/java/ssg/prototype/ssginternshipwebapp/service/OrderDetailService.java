@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 import ssg.prototype.ssginternshipwebapp.ItemCode;
 import ssg.prototype.ssginternshipwebapp.domain.entity.JumunDetail;
+import ssg.prototype.ssginternshipwebapp.domain.entity.JumunDetailId;
 import ssg.prototype.ssginternshipwebapp.domain.entity.Product;
 import ssg.prototype.ssginternshipwebapp.domain.repository.OrderDetailRepository;
 
@@ -46,5 +47,15 @@ public class OrderDetailService {
 	
 	public List<JumunDetail> showOrder(int oid) {
 		return orderDetailRepository.findByOrderId(oid);
+	}
+	
+	public void cancelOrder(int orderId0, int newOid, String[] checked) {		
+		for(int i=0; i<checked.length; i++) {
+			JumunDetail detail = orderDetailRepository.findById(new JumunDetailId(orderId0, Long.parseLong(checked[i]))).get();
+			orderDetailRepository.delete(detail);
+			detail.setOrderId(newOid);
+			detail.setItemCode(ItemCode.CANCELED);
+			orderDetailRepository.save(detail);
+		}
 	}
 }

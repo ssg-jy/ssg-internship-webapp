@@ -12,4 +12,5 @@ import ssg.prototype.ssginternshipwebapp.domain.entity.JumunId;
 public interface OrderRepository extends JpaRepository<Jumun, JumunId>{
 	public List<Jumun> findByCustomerId(Long customerId);
 	public List<Jumun> findByOrderId(int orderId);
+	public List<Jumun> findByOrderId0(int orderId0);
 }

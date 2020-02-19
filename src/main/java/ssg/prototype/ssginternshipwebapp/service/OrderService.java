@@ -20,9 +20,10 @@ public class OrderService {
 		this.orderRepository = orderRepository;
 	}
 	
-	public void saveOrder(Long customerId, int orderId) {
+	public void saveOrder(Long customerId, int orderId, int ordCode, int orderId0) {
 		SimpleDateFormat format = new SimpleDateFormat("E MMM dd HH:mm:ss");
 		String time = format.format(new Date());
-		orderRepository.save(new Jumun(customerId, orderId, time, OrdStat.ORD_COMPLETE, OrdCode.ORDER, orderId));
+		orderRepository.save(new Jumun(customerId, orderId, time, OrdStat.ORD_COMPLETE, ordCode, orderId0));
 	}
+	
 }

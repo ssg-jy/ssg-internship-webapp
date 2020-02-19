@@ -15,11 +15,13 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import lombok.ToString;
 
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @ToString
 @Getter
+@Setter
 @Entity
 @IdClass(JumunDetailId.class)
 public class JumunDetail implements Serializable {

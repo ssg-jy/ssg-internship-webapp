@@ -12,35 +12,73 @@
 		<nav th:replace="common/nav.html"></nav>
 		<h2 th:text="${name}+'님의 주문 목록'"></h2>
 			<p th:text="${orderDate}"></p>
+			<div>
+				<ul class="statuses">
+					<li th:each="status : ${statuses}" th:text="${status.getText()}" class="status" th:classappend="${status.getNow()} ? now : ''"></li>
+				</ul>
+			</div>
+			
+			<div th:if="${canceled.size() > 0}">
+				<h3>취소목록</h3>
+				<table class="table table-hover">
+					<thead class="thead-light">
+						<tr>
+							<th scope="col">상품</th>
+							<th scope="col">가격</th>
+							<th scope="col">수량</th>
+							<th scope="col">총액</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr th:each="cancelDetail, index : ${canceled}">
+							<th scope="row" th:text="${cldPducts.get(index.index).getName()}"></th>
+							<th scope="row" th:text="${cldPducts.get(index.index).getPrice()}"></th>
+							<td th:text="${cancelDetail.qty}"></td>
+							<td th:with="sum=${cldPducts.get(index.index).getPrice()*cancelDetail.qty}" th:text="${sum}"></td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+			
 			<table class="table table-hover">
+				<h3>주문목록</h3>
 				<thead class="thead-light">
-				<tr>
-					<th scope="col">상품</th>
-					<th scope="col">가격</th>
-					<th scope="col">수량</th>
-					<th scope="col">총액</th>
-					<th scope=""></th>
-				</tr>
-			</thead>
-			<tbody>
-				<tr th:each="orderDetail, index : ${orderDetails}">
-					<th scope="row" th:text="${products.get(index.index).getName()}">
-						<!-- <span th:if="${orderDetail.}" -->
-					</th>
-					<th scope="row" th:text="${products.get(index.index).getPrice()}"></th>
-					<td th:text="${orderDetail.qty}"></td>
-					<td th:with="sum=${products.get(index.index).getPrice()*orderDetail.qty}" th:text="${sum}"></td>
-					<th th:if="${ItemCode.ADDED}==${orderDetail.itemCode}">주문더하기</th>
-				</tr>
-			</tbody>
+					<tr>
+						<th scope="col">선택</th>
+						<th scope="col">상품</th>
+						<th scope="col">가격</th>
+						<th scope="col">수량</th>
+						<th scope="col">총액</th>
+						<th scope=""></th>
+					</tr>
+				</thead>
+				<form method="post" th:action="@{'/order/cancel/'+${name}}">
+				<tbody>
+					<tr th:each="orderDetail, index : ${orderDetails}">
+						<td><input type="checkbox" name="checked" th:value="${products.get(index.index).id}" /></td>
+						<th scope="row" th:text="${products.get(index.index).getName()}">
+							<!-- <span th:if="${orderDetail.}" -->
+						</th>
+						<th scope="row" th:text="${products.get(index.index).getPrice()}"></th>
+						<td th:text="${orderDetail.qty}"></td>
+						<td th:with="sum=${products.get(index.index).getPrice()*orderDetail.qty}" th:text="${sum}"></td>
+						<th th:if="${ItemCode.ADDED}==${orderDetail.itemCode}">주문더하기</th>
+					</tr>
+					<tr>
+						<td>
+							<input type="hidden" name="orderId0" th:value="${orderId}" />
+							<input type="submit" th:value="선택취소" />
+						</td>
+						<td></td>
+						<td></td>
+						<td></td>
+						<td></td>
+					</tr>
+				</tbody>
+				</form>
 		</table>
 		<p>총합: <span th:text="${total}" /></p>
-		<div>
-			<ul class="statuses">
-				<li th:each="status : ${statuses}" th:text="${status.getText()}" class="status" th:classappend="${status.getNow()} ? now : ''"></li>
-			</ul>
-		</div>
-		<a th:href="@{'/product/'+${name}+'?orderId='+${orderDetails.get(0).orderId}}">주문 더하기</a>
+		<a th:href="@{'/product/'+${name}+'?orderId='+${orderId}}">주문 더하기</a>
 	</div>
 </body>
 </html>
