@@ -132,6 +132,7 @@ public class OrderController {
 			HttpServletRequest request) {
 		HttpSession session = request.getSession();
 		Long cid = (Long) session.getAttribute("cid");
+		
 		/******* 이 부분 따로 빼야함 ********/
 		Optional<Variable> ocount_ = variableRepository.findById("ocount");
 		Variable ocount = ocount_.get(); 
@@ -147,4 +148,12 @@ public class OrderController {
 		return "redirect:/order/detail/"+orderId0;
 	}
 	
+	@PostMapping("/delivered/{oid}")
+	public String deliveredOrder(@PathVariable("oid") int oid) {
+		List<Jumun> ord = orderRepository.findByOrderId(oid);
+		Jumun order = ord.get(0);
+		order.setStatus(OrdStat.DLV_COMPLETE);
+		orderRepository.save(order);
+		return "redirect:/order/detail/"+oid;
+	}
 }

@@ -17,7 +17,9 @@
 					<li th:each="status : ${statuses}" th:text="${status.getText()}" class="status" th:classappend="${status.getNow()} ? now : ''"></li>
 				</ul>
 			</div>
-			
+			<form class="margin-under" method="post" th:action="@{'/order/delivered/'+${orderId}}">
+				<input type="submit" value="배송완료처리" />
+			</form>
 			<div th:if="${canceled.size() > 0}">
 				<h3>취소목록</h3>
 				<table class="table table-hover">

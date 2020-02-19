@@ -4,6 +4,10 @@
 	text-align: center;
 }
 
+.margin-under {
+	margin-bottom: 30px;
+}
+
 half {
 	width: 300px;
 }
