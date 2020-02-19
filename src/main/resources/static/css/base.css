@@ -47,7 +47,7 @@ ul.statuses {
 
 ul.statuses li {
 	width: 30%;
-	border: 1px solid black;
+	border: 1px solid #e7e7e7;
 	padding: 10px;
 }
 
