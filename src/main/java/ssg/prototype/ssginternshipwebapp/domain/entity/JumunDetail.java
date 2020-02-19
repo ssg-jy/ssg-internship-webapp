@@ -33,10 +33,14 @@ public class JumunDetail implements Serializable {
 	@Column
 	private int qty;
 	
+	@Column
+	private int itemCode;
+	
 	@Builder
-	public JumunDetail(int orderId, Long productId, int qty) {
+	public JumunDetail(int orderId, Long productId, int qty, int itemCode) {
 		this.orderId = orderId;
 		this.productId = productId;
 		this.qty = qty;
+		this.itemCode = itemCode;
 	}
 }

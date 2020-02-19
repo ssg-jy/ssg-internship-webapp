@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import ssg.prototype.ssginternshipwebapp.ItemCode;
 import ssg.prototype.ssginternshipwebapp.domain.entity.Customer;
 import ssg.prototype.ssginternshipwebapp.domain.entity.JumunDetail;
 import ssg.prototype.ssginternshipwebapp.domain.entity.Product;
@@ -54,7 +55,9 @@ public class ProductController {
 	OrderDetailService orderDetailService;
 
 	@GetMapping({"","/","/{name}"})
-	public String showProducts(@PathVariable("name") String name, Model model, HttpServletRequest request) {
+	public String showProducts(@PathVariable("name") String name, 
+			Model model, HttpServletRequest request, 
+			@RequestParam("orderId") Optional<Integer> orderId) {
 		HttpSession session = request.getSession();
 		String cname = (String) session.getAttribute("cname");
 		if(cname == null) {
@@ -69,6 +72,11 @@ public class ProductController {
 //		return lp.get(0).getName();
 		model.addAttribute("name", name);
 		model.addAttribute("productList", lp);
+		int oid = -1;
+		if(!orderId.isEmpty()) {
+			oid = orderId.get();
+		}
+		model.addAttribute("orderId", oid);
 		return "/product/list";
 	}
 	
@@ -84,22 +92,38 @@ public class ProductController {
 				return "redirect:/"; // 에러 페이지 출력해야!!!
 			}
 		}
-
+		
+		String orderId_ = qtys.remove("orderId");
 		/* 
 		 * qtys에서 수량이 0인 상품-수량 쌍 제거 
 		 * 각 함수에서 계속 0이상인지 검사하지 않고 그냥 여기서 제거하고 넘기는 걸로!
 		 */
 		qtys.entrySet().removeIf(e -> e.getValue().equals("0"));
 		
+		/**************** 여기 안넣고 밑에 넣으면 재고 업데이트가 안 됨..!!!! 나중에 알아봐야한다!!! ****************/
+		productService.updateQty(qtys); // 제품 목록 재고 업데이트
 		
 //		Object orderId_ = session.getAttribute("orderId");
 		Optional<Variable> ocount_ = variableRepository.findById("ocount");
 		int orderId = 1;
-		if(ocount_.isPresent()) {
+		
+		List<JumunDetail> orderDetails = null;
+		if(!orderId_.equals("-1")) { // 주문더하기일 경우!
+			orderId = Integer.parseInt(orderId_);
+			orderDetails = orderDetailService.addOrder(orderId, qtys);
+		} else { // 신규주문일 경우
+//			if(!ocount_.isEmpty()) { // 항상 있음. 아예 시작전에 DB에 저장해놨음!(초기값: 1) = 없어도 되는 조건!!!
 			Variable ocount = ocount_.get(); 
 			orderId = ocount.getValue();
 			ocount.setValue(orderId+1);
 			variableRepository.save(ocount);
+			
+			// 신규주문인 경우 order를 새로 만든다.
+			orderService.saveOrder(cid, orderId); // 세션에 저장된 customer key 로 해야.
+			
+			// 신규주문인 경우에 상세주문에 저장
+			orderDetails = orderDetailService.saveOrder(orderId, qtys);
+//			}
 		}
 		/*
 		if(orderId_ == null) {
@@ -108,17 +132,27 @@ public class ProductController {
 			orderId = (int)orderId_;
 		}
 		*/
-		orderService.saveOrder(cid, orderId); // 세션에 저장된 customer key 로 해야.
-		productService.updateQty(qtys);
-		List<JumunDetail> orderDetails = orderDetailService.saveOrder(orderId, qtys);
-		List<Product> products = productService.findProductsById(orderDetails);
-
-//		session.setAttribute("orderId", orderId+1);
 		
+		// 전달된 orderDetails를 토대로 products 리스트를 뽑아서 넘긴다. (상품 이름 출력 목적)
+		List<Product> products = productService.findProductsById(orderDetails);
+		
+		int total = 0;
+		for(int i=0; i<products.size(); i++) {
+			total += orderDetails.get(i).getQty() * products.get(i).getPrice();
+		}
+		System.out.println("-------------------");
+		
+//		session.setAttribute("orderId", orderId+1);
+				
 		// orderService를 만들어야 함!! // ordered에 넣어줘야 한다!!
 //		model.addAttribute("ordered", ordered);
 		model.addAttribute("orderDetails", orderDetails);
 		model.addAttribute("products", products);
+		for(int i=0; i<orderDetails.size(); i++) {
+			System.out.println(products.get(i).getName()+" "+orderDetails.get(i).getItemCode());
+		}
+		model.addAttribute("total", total);
+		model.addAttribute("ItemCode", new ItemCode());
 		return "/product/order";
 	}
 }

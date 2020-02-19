@@ -37,6 +37,7 @@ public class ProductService {
 		return products;
 	}
 	
+	// 제품 테이블의 재고 업데이트
 	public void updateQty(Map<String, String> qtys) {
 		Set<String> ids = qtys.keySet();
 		for(String id : ids) {
@@ -44,6 +45,7 @@ public class ProductService {
 			if(op.isPresent()) {
 				Product pro = op.get();
 				pro.setStock(pro.getStock() - Integer.parseInt(qtys.get(id)));
+//				System.out.println("재고 업데이트 "+op.get().getName()+" "+op.get().getStock());
 			}
 		}
 	}

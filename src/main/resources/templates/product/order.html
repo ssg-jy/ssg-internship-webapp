@@ -16,6 +16,7 @@
 					<th scope="col">상품명</th>
 					<th scope="col">가격</th>
 					<th scope="col">수량</th>
+					<th scope="col"></th>
 				</tr>
 			</thead>
 			<tbody>
@@ -23,9 +24,11 @@
 					<th scope="row" th:text="${products.get(index.index).getName()}"></th>
 					<th scope="row" th:text="${products.get(index.index).getPrice()}"></th>
 					<td th:text="${detail.qty}"></td>
+					<th th:if="${ItemCode.ADDED}==${detail.itemCode}">주문더하기</th>
 				</tr>
 			</tbody>
 		</table>
+		<p>총합: <span th:text="${total}" /></p>
 		<!-- <a th:href="@{/order/list}"> -->
 		<a th:href="@{'/product/'+${name}}">주문 하기</a>
 		<a th:href="@{'/order/list/'+${name}}">전체 주문 목록</a>
