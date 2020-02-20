@@ -79,7 +79,7 @@ public class ProductController {
 		model.addAttribute("productList", lp);
 		int oid = -1;
 		String ordText = "주문하기";
-		if(!orderId.isEmpty()) {
+		if(orderId.isPresent()) {
 			oid = orderId.get();
 			ordText = "주문더하기";
 		}

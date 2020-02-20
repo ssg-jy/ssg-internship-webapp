@@ -87,7 +87,7 @@
 				</tbody>
 				</form>
 		</table>
-		<p>총합: <span th:text="${total}" /></p>
+		<p>총합: <span th:text="${total}"></span></p>
 		<a th:if="${!delivered}" th:href="@{'/product/'+${name}+'?orderId='+${orderId}}" class="btn btn-primary">주문 더하기</a>
 	</div>
 </body>
