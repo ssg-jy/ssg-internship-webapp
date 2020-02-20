@@ -19,9 +19,15 @@
 				</ul>
 			</div>
 			
-			<form class="margin-under" method="post" th:action="@{'/order/delivered/'+${orderId}}">
-				<input th:if="${!delivered}" type="submit" class="btn btn-success" value="배송완료처리" />
+			<form th:if="${!delivered}" class="margin-under" method="post" th:action="@{'/order/delivered/'+${orderId}}">
+				<input type="submit" class="btn btn-success" value="배송완료처리" />
 			</form>
+			
+			<!-- 반품 -->
+			<form th:if="${delivered and !returned}" class="margin-under" method="post" th:action="@{'/order/returned/'+${orderId}}">
+				<input type="submit" class="btn btn-info" value="반품신청" />
+			</form>
+			
 			<div th:if="${canceled.size() > 0}">
 				<h3>취소목록</h3>
 				<table class="table table-hover">
@@ -83,10 +89,6 @@
 		</table>
 		<p>총합: <span th:text="${total}" /></p>
 		<a th:if="${!delivered}" th:href="@{'/product/'+${name}+'?orderId='+${orderId}}" class="btn btn-primary">주문 더하기</a>
-		<!-- 교환~~~~~~~~ 반품~~~~~~~ -->
-		<div th:if="${delivered}">
-			
-		</div>
 	</div>
 </body>
 </html>

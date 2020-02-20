@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import ssg.prototype.ssginternshipwebapp.ItemCode;
 import ssg.prototype.ssginternshipwebapp.OrdCode;
 import ssg.prototype.ssginternshipwebapp.OrdStat;
+import ssg.prototype.ssginternshipwebapp.RetStat;
 import ssg.prototype.ssginternshipwebapp.Status;
 import ssg.prototype.ssginternshipwebapp.domain.entity.Customer;
 import ssg.prototype.ssginternshipwebapp.domain.entity.Jumun;
@@ -72,7 +73,16 @@ public class OrderController {
 		
 		/******** 많이 아쉬운 부분!!! 이런건 처음부터 db에서 sql로 걸러줘야 하는데!!********/
 		List<Jumun> orders = orderRepository.findByCustomerId(cid);
-		orders.removeIf(o -> o.getCode() != OrdCode.ORDER);
+		orders.removeIf(o -> (o.getCode() != OrdCode.ORDER && o.getCode() != OrdCode.RETURN));
+		/*
+		 * {
+			if(o.getCode() != OrdCode.ORDER && o.getCode() != OrdCode.RETURN) {
+				System.out.println("code is not order or return");
+				return true;
+			} else {
+				return false;
+			}
+		}*/
 		/**************/
 		model.addAttribute("stat_string", OrdStat.stat_string);
 		model.addAttribute("orders", orders);
@@ -85,7 +95,6 @@ public class OrderController {
 		* 여기서 oid로 db 조회해서 사용자 아이디와 session의 cid 가 동일한지 확인해야한다!!
 		*/
 		List<Jumun> ord = orderRepository.findByOrderId0(oid0);
-		System.out.println("원주문번호로 찾은 주문 개수: "+ord.size());
 		boolean returned = false;
 		boolean delivered = false;
 		
@@ -105,10 +114,10 @@ public class OrderController {
 			statuses.add(new Status(OrdStat.stat_string[2], false));
 			statuses.get(ord.get(0).getStatus()).setNow(true);
 		} else {
-			statuses.add(new Status(OrdStat.stat_string[0], false));
-			statuses.add(new Status(OrdStat.stat_string[1], false));
-			statuses.add(new Status(OrdStat.stat_string[2], false));
-			statuses.get(ord.get(0).getStatus()).setNow(true);
+			statuses.add(new Status(OrdStat.stat_string[3], false));
+			statuses.add(new Status(OrdStat.stat_string[4], false));
+			statuses.add(new Status(OrdStat.stat_string[5], false));
+			statuses.get(ord.get(0).getStatus()-OrdStat.RET).setNow(true);
 		}
 		
 		List<JumunDetail> canceled = new ArrayList<JumunDetail>();
@@ -118,7 +127,6 @@ public class OrderController {
 				canceled.addAll(orderDetailService.showOrder(ord.get(i).getOrderId()));
 			}
 		}
-		System.out.println("canceled size: "+canceled.size());
 		List<Product> canceledProducts = productService.findProductsById(canceled);
 		
 		List<JumunDetail> orderDetails = orderDetailService.showOrder(ord.get(0).getOrderId());
@@ -173,6 +181,16 @@ public class OrderController {
 		List<Jumun> ord = orderRepository.findByOrderId(oid);
 		Jumun order = ord.get(0);
 		order.setStatus(OrdStat.DLV_COMPLETE);
+		orderRepository.save(order);
+		return "redirect:/order/detail/"+oid;
+	}
+	
+	@PostMapping("/returned/{oid}")
+	public String returnedOrder(@PathVariable("oid") int oid) {
+		List<Jumun> ord = orderRepository.findByOrderId(oid);
+		Jumun order = ord.get(0);
+		order.setCode(OrdCode.RETURN);
+		order.setStatus(OrdStat.RET_REQ);
 		orderRepository.save(order);
 		return "redirect:/order/detail/"+oid;
 	}
