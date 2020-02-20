@@ -31,6 +31,7 @@ import ssg.prototype.ssginternshipwebapp.domain.repository.VariableRepository;
 import ssg.prototype.ssginternshipwebapp.service.OrderDetailService;
 import ssg.prototype.ssginternshipwebapp.service.OrderService;
 import ssg.prototype.ssginternshipwebapp.service.ProductService;
+import ssg.prototype.ssginternshipwebapp.service.VariableService;
 
 @Controller
 @EnableAutoConfiguration
@@ -54,6 +55,9 @@ public class ProductController {
 	
 	@Autowired
 	OrderDetailService orderDetailService;
+
+	@Autowired
+	VariableService variableService;	
 
 	@GetMapping({"","/","/{name}"})
 	public String showProducts(@PathVariable("name") String name, 
@@ -108,7 +112,6 @@ public class ProductController {
 		productService.updateQty(qtys, false); // 제품 목록 재고 업데이트
 		
 //		Object orderId_ = session.getAttribute("orderId");
-		Optional<Variable> ocount_ = variableRepository.findById("ocount");
 		int orderId = 1;
 		
 		if(!orderId_.equals("-1")) { // 주문더하기일 경우!
@@ -116,10 +119,7 @@ public class ProductController {
 			orderDetailService.addOrder(orderId, qtys);
 		} else { // 신규주문일 경우
 //			if(!ocount_.isEmpty()) { // 항상 있음. 아예 시작전에 DB에 저장해놨음!(초기값: 1) = 없어도 되는 조건!!!
-			Variable ocount = ocount_.get(); 
-			orderId = ocount.getValue();
-			ocount.setValue(orderId+1);
-			variableRepository.save(ocount);
+			orderId = variableService.newOid();
 			
 			// 신규주문인 경우 order를 새로 만든다.
 			orderService.saveOrder(cid, orderId, OrdCode.ORDER, orderId); // 세션에 저장된 customer key 로 해야.

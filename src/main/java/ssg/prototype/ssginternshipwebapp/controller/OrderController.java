@@ -34,6 +34,7 @@ import ssg.prototype.ssginternshipwebapp.domain.repository.VariableRepository;
 import ssg.prototype.ssginternshipwebapp.service.OrderDetailService;
 import ssg.prototype.ssginternshipwebapp.service.OrderService;
 import ssg.prototype.ssginternshipwebapp.service.ProductService;
+import ssg.prototype.ssginternshipwebapp.service.VariableService;
 
 @Controller
 @EnableAutoConfiguration
@@ -57,6 +58,9 @@ public class OrderController {
 	
 	@Autowired
 	OrderDetailService orderDetailService;
+	
+	@Autowired
+	VariableService variableService;
 
 	@GetMapping({"/list/{name}"})
 	public String showList(@PathVariable("name") String name, Model model, HttpServletRequest request) {
@@ -73,7 +77,7 @@ public class OrderController {
 		
 		/******** 많이 아쉬운 부분!!! 이런건 처음부터 db에서 sql로 걸러줘야 하는데!!********/
 		List<Jumun> orders = orderRepository.findByCustomerId(cid);
-		orders.removeIf(o -> (o.getCode() != OrdCode.ORDER && o.getCode() != OrdCode.RETURN));
+		orders.removeIf(o -> (o.getCode() != OrdCode.ORDER));
 		/*
 		 * {
 			if(o.getCode() != OrdCode.ORDER && o.getCode() != OrdCode.RETURN) {
@@ -98,7 +102,7 @@ public class OrderController {
 		boolean returned = false;
 		boolean delivered = false;
 		
-		if(ord.get(0).getCode() == OrdCode.RETURN) {
+		if(ord.get(0).getStatus() == OrdStat.RET_REQ) {
 			returned = true;
 			delivered = true;
 		} else {
@@ -162,11 +166,7 @@ public class OrderController {
 		Long cid = (Long) session.getAttribute("cid");
 		
 		/******* 이 부분 따로 빼서 함수로 만들어야. 다른 데서도 중복된다.********/
-		Optional<Variable> ocount_ = variableRepository.findById("ocount");
-		Variable ocount = ocount_.get(); 
-		int newOrderId = ocount.getValue();
-		ocount.setValue(newOrderId+1);
-		variableRepository.save(ocount);
+		int newOrderId = variableService.newOid();
 		/***********/
 		
 		int orderId0 = Integer.parseInt(orderId0_);
@@ -186,13 +186,18 @@ public class OrderController {
 		return "redirect:/order/detail/"+oid;
 	}
 	
-	@PostMapping("/returned/{oid}")
-	public String returnedOrder(@PathVariable("oid") int oid) {
-		List<Jumun> ord = orderRepository.findByOrderId(oid);
+	@PostMapping("/returned/{oid0}")
+	public String returnedOrder(@PathVariable("oid0") int orderId0,
+			HttpServletRequest request) {
+		HttpSession session = request.getSession();
+		Long cid = (Long) session.getAttribute("cid");
+		
+		int newOrderId = variableService.newOid();
+		orderService.saveOrder(cid, newOrderId, OrdCode.RETURN, orderId0);
+		List<Jumun> ord = orderRepository.findByOrderId0(orderId0);
 		Jumun order = ord.get(0);
-		order.setCode(OrdCode.RETURN);
 		order.setStatus(OrdStat.RET_REQ);
 		orderRepository.save(order);
-		return "redirect:/order/detail/"+oid;
+		return "redirect:/order/detail/"+orderId0;
 	}
 }

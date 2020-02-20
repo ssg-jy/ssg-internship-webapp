@@ -23,7 +23,10 @@ public class OrderService {
 	public void saveOrder(Long customerId, int orderId, int ordCode, int orderId0) {
 		SimpleDateFormat format = new SimpleDateFormat("E MMM dd HH:mm:ss");
 		String time = format.format(new Date());
-		orderRepository.save(new Jumun(customerId, orderId, time, OrdStat.ORD_COMPLETE, ordCode, orderId0));
+		int ordStat = OrdStat.ORD_COMPLETE;
+		if(ordCode == OrdCode.RETURN)
+			ordStat = OrdStat.RET_REQ;
+		orderRepository.save(new Jumun(customerId, orderId, time, ordStat, ordCode, orderId0));
 	}
 	
 }
