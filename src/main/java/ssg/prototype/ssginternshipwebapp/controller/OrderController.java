@@ -76,8 +76,9 @@ public class OrderController {
 		}
 		
 		/******** 많이 아쉬운 부분!!! 이런건 처음부터 db에서 sql로 걸러줘야 하는데!!********/
-		List<Jumun> orders = orderRepository.findByCustomerId(cid);
-		orders.removeIf(o -> (o.getCode() != OrdCode.ORDER));
+//		List<Jumun> orders = orderRepository.findByCustomerId(cid);
+//		orders.removeIf(o -> (o.getCode() != OrdCode.ORDER));
+		List<Jumun> orders = orderRepository.findByCustomerIdAndCode(cid, OrdCode.ORDER);
 		/*
 		 * {
 			if(o.getCode() != OrdCode.ORDER && o.getCode() != OrdCode.RETURN) {
