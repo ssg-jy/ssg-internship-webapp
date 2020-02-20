@@ -84,4 +84,11 @@ public class CustomerController {
 	public String logIn(@PathVariable("cid") int cid) {
 		return "redirect:/product/";
 	}
+	
+	@GetMapping("/logout/{name}")
+	public String logOut(@PathVariable("name") String name, HttpServletRequest request) {
+		HttpSession session = request.getSession();
+		session.invalidate();
+		return "redirect:/";
+	}
 }

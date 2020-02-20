@@ -23,9 +23,9 @@ ul li {
 ul.navbar {
 	border: 1px solid #e7e7e7;
 	background-color: #f3f3f3;
-	width: 195px;
+	width: 300px;
 	position: absolute;
-	right: 20%;
+	right: 25%;
 	margin: 0;
 	padding: 0;
 	overflow: hidden;	
