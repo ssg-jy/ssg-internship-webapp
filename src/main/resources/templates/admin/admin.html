@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+	<meta charset="UTF-8">
+	<title>admin</title>
+    <link rel="stylesheet" th:href="@{/css/base.css}" />
+    <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}" />
+</head>
+<body>
+	<div class="container">
+		<table class="table table-hover">
+				<thead class="thead-light">
+				<tr>
+					<th scope="col">원주문번호</th>
+					<th scope="col">주문번호</th>
+					<th scope="col">주문코드</th>
+					<th scope="col">주문자이름</th>
+					<th scope="col">주문상태</th>
+					<th scope="col">주문일시</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr th:each="order : ${orders}">
+					<th scope="row" th:text="${order.orderId0}"></th>
+					<td th:text="${order.orderId}"></td>
+					<td th:text="${codeString[order.code]}"></td>
+					<td th:text="${customers.get(order.customerId)}"></td>
+					<td th:text="${statString[order.status]}"></td>
+					<td th:text="${order.orderedDate}"></td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+</body>
+</html>

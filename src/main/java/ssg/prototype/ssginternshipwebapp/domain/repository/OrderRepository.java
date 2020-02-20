@@ -19,4 +19,6 @@ public interface OrderRepository extends CrudRepository<Jumun, JumunId>{
 //	@Query("SELECT o FROM JUMUN o WHERE o.customerId = ?1 AND o.CODE = ?2")
 //	public List<Jumun> findByCidAndCode(Long cid, int code);
 	public List<Jumun> findByCustomerIdAndCode(Long cid, int code);
+	
+	public List<Jumun> findAllByOrderByOrderId0();
 }
