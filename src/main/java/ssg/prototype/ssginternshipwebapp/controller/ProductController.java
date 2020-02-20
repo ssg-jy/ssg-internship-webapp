@@ -105,7 +105,7 @@ public class ProductController {
 		qtys.entrySet().removeIf(e -> e.getValue().equals("0"));
 		
 		/**************** 여기 안넣고 밑에 넣으면 재고 업데이트가 안 됨..!!!! 나중에 알아봐야한다!!! ****************/
-		productService.updateQty(qtys); // 제품 목록 재고 업데이트
+		productService.updateQty(qtys, false); // 제품 목록 재고 업데이트
 		
 //		Object orderId_ = session.getAttribute("orderId");
 		Optional<Variable> ocount_ = variableRepository.findById("ocount");

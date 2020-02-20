@@ -1,6 +1,7 @@
 package ssg.prototype.ssginternshipwebapp.service;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -49,13 +50,16 @@ public class OrderDetailService {
 		return orderDetailRepository.findByOrderId(oid);
 	}
 	
-	public void cancelOrder(int orderId0, int newOid, String[] checked) {		
+	public Map<String, String> cancelOrder(int orderId0, int newOid, String[] checked) {
+		Map<String, String> canceledProducts = new HashMap<String, String>();
 		for(int i=0; i<checked.length; i++) {
 			JumunDetail detail = orderDetailRepository.findById(new JumunDetailId(orderId0, Long.parseLong(checked[i]))).get();
 			orderDetailRepository.delete(detail);
 			detail.setOrderId(newOid);
 			detail.setItemCode(ItemCode.CANCELED);
 			orderDetailRepository.save(detail);
+			canceledProducts.put(checked[i], detail.getQty()+"");
 		}
+		return canceledProducts;
 	}
 }

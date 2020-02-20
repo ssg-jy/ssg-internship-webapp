@@ -38,13 +38,17 @@ public class ProductService {
 	}
 	
 	// 제품 테이블의 재고 업데이트
-	public void updateQty(Map<String, String> qtys) {
+	public void updateQty(Map<String, String> qtys, boolean flag) {
 		Set<String> ids = qtys.keySet();
 		for(String id : ids) {
 			Optional<Product> op = productRepository.findById(Long.parseLong(id));
 			if(op.isPresent()) {
 				Product pro = op.get();
-				pro.setStock(pro.getStock() - Integer.parseInt(qtys.get(id)));
+				if(!flag)
+					pro.setStock(pro.getStock() - Integer.parseInt(qtys.get(id)));
+				else
+					pro.setStock(pro.getStock() + Integer.parseInt(qtys.get(id)));
+				productRepository.save(pro);
 //				System.out.println("재고 업데이트 "+op.get().getName()+" "+op.get().getStock());
 			}
 		}

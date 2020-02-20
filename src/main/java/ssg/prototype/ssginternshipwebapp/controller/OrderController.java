@@ -2,6 +2,7 @@ package ssg.prototype.ssginternshipwebapp.controller;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import javax.servlet.http.HttpServletRequest;
@@ -20,7 +21,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import ssg.prototype.ssginternshipwebapp.ItemCode;
 import ssg.prototype.ssginternshipwebapp.OrdCode;
 import ssg.prototype.ssginternshipwebapp.OrdStat;
-import ssg.prototype.ssginternshipwebapp.RetStat;
 import ssg.prototype.ssginternshipwebapp.Status;
 import ssg.prototype.ssginternshipwebapp.domain.entity.Customer;
 import ssg.prototype.ssginternshipwebapp.domain.entity.Jumun;
@@ -161,7 +161,7 @@ public class OrderController {
 		HttpSession session = request.getSession();
 		Long cid = (Long) session.getAttribute("cid");
 		
-		/******* 이 부분 따로 빼야함 ********/
+		/******* 이 부분 따로 빼서 함수로 만들어야. 다른 데서도 중복된다.********/
 		Optional<Variable> ocount_ = variableRepository.findById("ocount");
 		Variable ocount = ocount_.get(); 
 		int newOrderId = ocount.getValue();
@@ -172,7 +172,8 @@ public class OrderController {
 		int orderId0 = Integer.parseInt(orderId0_);
 		orderService.saveOrder(cid, newOrderId, OrdCode.PART_CANCEL, orderId0);
 		
-		orderDetailService.cancelOrder(orderId0, newOrderId, checked);
+		Map<String, String> canceledProducts = orderDetailService.cancelOrder(orderId0, newOrderId, checked);
+		productService.updateQty(canceledProducts, true);
 		return "redirect:/order/detail/"+orderId0;
 	}
 	
