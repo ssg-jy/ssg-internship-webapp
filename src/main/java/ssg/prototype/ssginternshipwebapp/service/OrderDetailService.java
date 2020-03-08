@@ -10,7 +10,6 @@ import org.springframework.stereotype.Service;
 import ssg.prototype.ssginternshipwebapp.ItemCode;
 import ssg.prototype.ssginternshipwebapp.domain.entity.JumunDetail;
 import ssg.prototype.ssginternshipwebapp.domain.entity.JumunDetailId;
-import ssg.prototype.ssginternshipwebapp.domain.entity.Product;
 import ssg.prototype.ssginternshipwebapp.domain.repository.OrderDetailRepository;
 
 @Service
