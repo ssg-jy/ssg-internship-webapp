@@ -3,6 +3,7 @@
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1" />
 	<title>Products</title>
     <link rel="stylesheet" th:href="@{/css/base.css}" />
     <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}" />
@@ -24,18 +25,42 @@
 					</tr>
 				</thead>
 				<tbody>
-					<tr th:each="product : ${productList}">
+					<tr th:each="product : ${productList}" class="product">
 						<th scope="row" th:text="${product.name}"></th>
 						<td th:text="${product.price}"></td>
 						<td th:text="${product.stock}"></td>
 						<!-- <td><input type="checkbox" name="checked" th:value="${product.id}" /></td> -->
-						<td><input type="number" th:name="${product.id}" th:value="${1}"/></td>						
+						<td><input type="number" class="quantity" th:name="${product.id}" th:value="${1}"/></td>						
 					</tr>
 				</tbody>
 			</table>
+			<div id="shpinfo">
+				합계: <span id="sum"></span>
+			</div>
 			<input type="hidden" name="orderId" th:value="${orderId}" />
 			<input type="submit" th:value="${ordText}" />
 		</form>
 	</div>
+	<script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+	<script th:inline="javascript">
+	/*<![CDATA[*/
+		const productsList = /*[[${productList}]]*/ "not working"; 
+	/*]]>*/
+		function calcSum() {
+			let sum = 0;
+			$(".quantity").each((index, item)=>{
+				console.log("index: "+index+" value: "+ $(item).val());
+				sum += productsList[index].price * $(item).val();
+			});
+			return sum;
+		}
+		$(function() {
+			$("#sum").text(calcSum);			
+			$(".quantity").on("change", (e) => {
+				console.log("quantity changed");
+				$("#sum").text(calcSum());
+			});
+		});
+	</script>
 </body>
 </html>
